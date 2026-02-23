@@ -69,6 +69,33 @@ bool isDeviceOnI2C(uint8_t address) {
 }
 
 //------------------------------------------------------------------------------
+// Führt einen I2C-Scan durch und gibt gefundene Geräte auf der seriellen
+// Schnittstelle aus.
+//------------------------------------------------------------------------------
+void printI2CScan() {
+  Serial.println("I2C-Scan gestartet...");
+
+  bool foundAny = false;
+  for (uint8_t address = 1; address < 127; address++) {
+    Wire.beginTransmission(address);
+    uint8_t error = Wire.endTransmission();
+
+    if (error == 0) {
+      foundAny = true;
+      Serial.print("Gefundenes I2C-Geraet bei 0x");
+      if (address < 16) {
+        Serial.print("0");
+      }
+      Serial.println(address, HEX);
+    }
+  }
+
+  if (!foundAny) {
+    Serial.println("Keine I2C-Geraete gefunden.");
+  }
+}
+
+//------------------------------------------------------------------------------
 // Arduino-Setup-Funktion: wird einmalig beim Start ausgefuehrt.
 //------------------------------------------------------------------------------
 void setup() {
@@ -84,9 +111,10 @@ void setup() {
   pinMode(GREEN_PIN, OUTPUT);
   setLights(false, true, false); // Gelb als Startzustand
 
-  // I2C-Bus starten (SDA/SCL)
+  // I2C-Bus starten (SDA/SCL) und scannen
   Wire.begin();
   Serial.println("PN532 RFID Reader startet...");
+  printI2CScan();
 
   if (!isDeviceOnI2C(0x24)) {
     Serial.println("PN532 nicht auf I2C-Adresse 0x24 gefunden.");
