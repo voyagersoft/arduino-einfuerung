@@ -13,3 +13,6 @@ Kurze Übersicht über die vorhandenen Beispiele:
 
 - `04_rfid/04_rfid.ino`  
 	Liest RFID-Karten mit einem PN532 ein, gibt die erkannte UID aus und setzt abhängig davon den LED-Zustand.
+
+- `06_abstand/06_abstand.ino`  
+	Liest einen HC-SR04 Abstandssensor und zeigt den gemessenen Abstand auf 8 WS2812-LEDs als Farbbalken.
