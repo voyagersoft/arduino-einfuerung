@@ -12,6 +12,11 @@
  * - PN532 VCC  -> 5V (oder 3.3V je nach Modul)
  * - PN532 GND  -> GND
  *
+ * Optionaler Relais-Anschluss:
+ * - Relais IN  -> D8
+ * - Relais VCC -> 5V
+ * - Relais GND -> GND
+ *
  * Board-Hinweise fuer SDA/SCL:
  * - Arduino UNO/Nano: SDA=A4, SCL=A5
  * - Arduino Mega: SDA=20, SCL=21
@@ -29,6 +34,8 @@ const int PN532_RESET = 3;
 const int RED_PIN = 13;
 const int YELLOW_PIN = 12;
 const int GREEN_PIN = 11;
+const int RELAY_PIN = 8;
+const bool RELAY_ACTIVE_HIGH = true;
 
 Adafruit_PN532 nfc(PN532_IRQ, PN532_RESET);
 
@@ -58,6 +65,10 @@ void setLights(bool redOn, bool yellowOn, bool greenOn) {
   digitalWrite(RED_PIN, redOn ? HIGH : LOW);
   digitalWrite(YELLOW_PIN, yellowOn ? HIGH : LOW);
   digitalWrite(GREEN_PIN, greenOn ? HIGH : LOW);
+
+  // Relais soll nur dann an sein, wenn Gruen aktiv ist.
+  bool relaySignal = RELAY_ACTIVE_HIGH ? greenOn : !greenOn;
+  digitalWrite(RELAY_PIN, relaySignal ? LOW : HIGH);
 }
 
 //------------------------------------------------------------------------------
@@ -82,6 +93,7 @@ void setup() {
   pinMode(RED_PIN, OUTPUT);
   pinMode(YELLOW_PIN, OUTPUT);
   pinMode(GREEN_PIN, OUTPUT);
+  pinMode(RELAY_PIN, OUTPUT);
   setLights(false, true, false); // Gelb als Startzustand
 
   // I2C-Bus starten (SDA/SCL)
@@ -108,6 +120,9 @@ void setup() {
 
 //------------------------------------------------------------------------------
 // Arduino-Hauptschleife: wird nach setup() immer wieder ausgefuehrt.
+// - Einlesen der UID einer RFID/NFC-Karte
+// - Ausgabe der UID auf der seriellen Schnittstelle
+// - Steuerung der Ampel-LEDs basierend auf der UID
 //------------------------------------------------------------------------------
 void loop() {
   uint8_t uid[7];
