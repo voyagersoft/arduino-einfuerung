@@ -41,16 +41,16 @@ Aktoren und einfache Automatisierung.
   - Nach 8 Sekunden ohne neue Bewegung: Relais AUS und LEDs AUS.
   - Serielle Statusmeldungen ueber USB/UART.
 
-- 08_minecraftlamp/  
+- 08_minecraftlampe  
 	- [3D-Dateien fuer Gehaeuse/Modell (STEP/3MF)](https://makerworld.com/de/models/1929022-minecraft-ore-lamp-wled-esp32-d1-mini-usb-c)
 	- kein Arduino-Sketch enthalten, [WLED Code](https://install.wled.me/)
 	- Basisplatte optimiert (für 8x8 WS2812)
 
-- 09_led_matrix/  
+- 09_led_matrix
 	- [3D-Datei fuer LED-Matrix-Uhr (3MF)](https://makerworld.com/de/models/898272-led-matrix-clock)
-	- kein Arduino-Sketch enthalten, [WLED Code](https://install.wled.me/)
+	- kein Arduino-Sketch enthalten, eigenes [Github Repository mit PlatformIO](https://github.com/voyagersoft/esp-led-uhr)
 
 - 10_ArduTester
-  [10_ArduTester auf GitHub](https://github.com/andres-garcia-alves/electronics-ardutester?tab=readme-ov-file)
+  - [10_ArduTester auf GitHub](https://github.com/andres-garcia-alves/electronics-ardutester?tab=readme-ov-file)
 
 
