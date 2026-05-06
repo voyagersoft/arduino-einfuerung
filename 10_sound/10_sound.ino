@@ -37,35 +37,59 @@ const int NOTE_G5 = 784;
 const int NOTE_GS5 = 831;
 const int NOTE_A5 = 880;
 
-const int melody[] = {
-  NOTE_A4, NOTE_A4, NOTE_A4, NOTE_F4, NOTE_C5,
-  NOTE_A4, NOTE_F4, NOTE_C5, NOTE_A4,
-  NOTE_E5, NOTE_E5, NOTE_E5, NOTE_F5, NOTE_C5,
-  NOTE_GS4, NOTE_F4, NOTE_C5, NOTE_A4,
-  NOTE_A5, NOTE_A4, NOTE_A4, NOTE_A5,
-  NOTE_GS5, NOTE_G5, NOTE_FS5, NOTE_F5, NOTE_FS5,
-  0,
-  NOTE_AS4, NOTE_DS5, NOTE_D5, NOTE_CS5, NOTE_C5,
-  NOTE_B4, NOTE_C5, 0,
-  NOTE_F4, NOTE_GS4, NOTE_F4, NOTE_A4,
-  NOTE_C5, NOTE_A4, NOTE_C5, NOTE_E5
+struct NoteEvent {
+  int frequency;
+  int durationMs;
 };
 
-const int noteDurations[] = {
-  500, 500, 500, 350, 150,
-  500, 350, 150, 650,
-  500, 500, 500, 350, 150,
-  500, 350, 150, 650,
-  500, 300, 150, 500,
-  325, 175, 125, 125, 250,
-  325,
-  250, 500, 325, 175, 125,
-  125, 250, 325,
-  250, 500, 350, 125,
-  500, 375, 125, 650
+const NoteEvent score[] = {
+  {NOTE_A4, 500},
+  {NOTE_A4, 500},
+  {NOTE_A4, 500},
+  {NOTE_F4, 350},
+  {NOTE_C5, 150},
+  {NOTE_A4, 500},
+  {NOTE_F4, 350},
+  {NOTE_C5, 150},
+  {NOTE_A4, 650},
+  {NOTE_E5, 500},
+  {NOTE_E5, 500},
+  {NOTE_E5, 500},
+  {NOTE_F5, 350},
+  {NOTE_C5, 150},
+  {NOTE_GS4, 500},
+  {NOTE_F4, 350},
+  {NOTE_C5, 150},
+  {NOTE_A4, 650},
+  {NOTE_A5, 500},
+  {NOTE_A4, 300},
+  {NOTE_A4, 150},
+  {NOTE_A5, 500},
+  {NOTE_GS5, 325},
+  {NOTE_G5, 175},
+  {NOTE_FS5, 125},
+  {NOTE_F5, 125},
+  {NOTE_FS5, 250},
+  {0, 325},
+  {NOTE_AS4, 250},
+  {NOTE_DS5, 500},
+  {NOTE_D5, 325},
+  {NOTE_CS5, 175},
+  {NOTE_C5, 125},
+  {NOTE_B4, 125},
+  {NOTE_C5, 250},
+  {0, 325},
+  {NOTE_F4, 250},
+  {NOTE_GS4, 500},
+  {NOTE_F4, 350},
+  {NOTE_A4, 125},
+  {NOTE_C5, 500},
+  {NOTE_A4, 375},
+  {NOTE_C5, 125},
+  {NOTE_E5, 650}
 };
 
-const int noteCount = sizeof(melody) / sizeof(melody[0]);
+const int noteCount = sizeof(score) / sizeof(score[0]);
 
 
 void playNote(int frequency, int durationMs) {
@@ -87,7 +111,7 @@ void setup() {
 
 void loop() {
   for (int i = 0; i < noteCount; i++) {
-    playNote(melody[i], noteDurations[i]);
+    playNote(score[i].frequency, score[i].durationMs);
   }
 
   delay(2000);
