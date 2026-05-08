@@ -13,8 +13,9 @@
  * @author Steffen Wagner <steffen@swagner.de>
  */
 
-const int LEFT_PIEZO_PIN = 8;
-const int RIGHT_PIEZO_PIN = 9;
+const int LEFT_SPEAKER_PIN = 8;
+const int RIGHT_SPEAKER_PIN = 9;
+const int PIEZO_PIN = 10;
 const float TUNING_FACTOR = 1.00f;
 const int NOTE_GAP_DIVISOR = 4;
 
@@ -51,6 +52,10 @@ struct NoteEvent {
 const int noteCount = sizeof(score) / sizeof(score[0]);
 
 
+//------------------------------------------------------------------------------
+// Spielt die angegebenen Frequenzen auf den linken und rechten Lautsprecher für
+// die angegebene Dauer ab. Die Frequenzen werden als Rechtecksignal erzeugt.
+//------------------------------------------------------------------------------
 void playStereoTones(int leftFrequency, int rightFrequency, int durationMs) {
   const unsigned long durationUs = (unsigned long)durationMs * 1000UL;
   const unsigned long startUs = micros();
@@ -67,30 +72,37 @@ void playStereoTones(int leftFrequency, int rightFrequency, int durationMs) {
     ? 500000UL / (unsigned long)rightFrequency
     : 0;
 
-  digitalWrite(LEFT_PIEZO_PIN, LOW);
-  digitalWrite(RIGHT_PIEZO_PIN, LOW);
+  digitalWrite(LEFT_SPEAKER_PIN, LOW);
+  digitalWrite(RIGHT_SPEAKER_PIN, LOW);
+  digitalWrite(PIEZO_PIN, LOW);
 
   while ((micros() - startUs) < durationUs) {
     const unsigned long nowUs = micros();
 
     if (leftHalfPeriodUs > 0 && (nowUs - lastToggleLeftUs) >= leftHalfPeriodUs) {
       leftState = !leftState;
-      digitalWrite(LEFT_PIEZO_PIN, leftState ? HIGH : LOW);
+      digitalWrite(LEFT_SPEAKER_PIN, leftState ? HIGH : LOW);
+      digitalWrite(PIEZO_PIN, leftState ? HIGH : LOW);
       lastToggleLeftUs = nowUs;
     }
 
     if (rightHalfPeriodUs > 0 && (nowUs - lastToggleRightUs) >= rightHalfPeriodUs) {
       rightState = !rightState;
-      digitalWrite(RIGHT_PIEZO_PIN, rightState ? HIGH : LOW);
+      digitalWrite(RIGHT_SPEAKER_PIN, rightState ? HIGH : LOW);
       lastToggleRightUs = nowUs;
     }
   }
 
-  digitalWrite(LEFT_PIEZO_PIN, LOW);
-  digitalWrite(RIGHT_PIEZO_PIN, LOW);
+  digitalWrite(LEFT_SPEAKER_PIN, LOW);
+  digitalWrite(RIGHT_SPEAKER_PIN, LOW);
+  digitalWrite(PIEZO_PIN, LOW);
 }
 
 
+//------------------------------------------------------------------------------
+// Spielt eine Note mit der angegebenen Frequenz und Dauer ab, wobei die
+// Frequenz je nach Notenindex auf den linken oder rechten Kanal verteilt wird.
+//------------------------------------------------------------------------------
 void playNote(int frequency, int durationMs, int noteIndex) {
   const int tunedFrequency = frequency > 0
     ? (int)(frequency * TUNING_FACTOR + 0.5f)
@@ -104,20 +116,29 @@ void playNote(int frequency, int durationMs, int noteIndex) {
     playStereoTones(tunedFrequency > 0 ? tunedFrequency / 2 : 0, tunedFrequency, playTimeMs);
   }
 
-  digitalWrite(LEFT_PIEZO_PIN, LOW);
-  digitalWrite(RIGHT_PIEZO_PIN, LOW);
+  digitalWrite(LEFT_SPEAKER_PIN, LOW);
+  digitalWrite(RIGHT_SPEAKER_PIN, LOW);
+  digitalWrite(PIEZO_PIN, LOW);
   delay(gapMs);
 }
 
 
+//------------------------------------------------------------------------------
+// Setup: Initialisiert die Pins für die Lautsprecher.
+//------------------------------------------------------------------------------
 void setup() {
-  pinMode(LEFT_PIEZO_PIN, OUTPUT);
-  pinMode(RIGHT_PIEZO_PIN, OUTPUT);
-  digitalWrite(LEFT_PIEZO_PIN, LOW);
-  digitalWrite(RIGHT_PIEZO_PIN, LOW);
+  pinMode(LEFT_SPEAKER_PIN, OUTPUT);
+  pinMode(RIGHT_SPEAKER_PIN, OUTPUT);
+  pinMode(PIEZO_PIN, OUTPUT);
+  digitalWrite(LEFT_SPEAKER_PIN, LOW);
+  digitalWrite(RIGHT_SPEAKER_PIN, LOW);
+  digitalWrite(PIEZO_PIN, LOW);
 }
 
 
+//------------------------------------------------------------------------------
+// Hauptloop: Spielt die Notenfolge in einer Endlosschleife ab.
+//------------------------------------------------------------------------------
 void loop() {
   for (int i = 0; i < noteCount; i++) {
     playNote(score[i].frequency, score[i].durationMs, i);
